@@ -10,7 +10,7 @@
   justify-content: center;
   font-size: 2.5rem;
   font-weight: bold;
-  color: #1e3d2f;
+  color: white;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -21,7 +21,7 @@
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  background: linear-gradient(135deg, #f59e0b 0%, #fcd34d 50%, #d97706 100%);
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 50%, #1a202c 100%);
 }
 
 .tile.blue:not(.revealed),
@@ -29,14 +29,14 @@
 .tile.red:not(.revealed),
 .tile.green:not(.revealed),
 .tile.gray:not(.revealed) {
-  background: linear-gradient(135deg, #f59e0b 0%, #fcd34d 50%, #d97706 100%);
-  color: #1e3d2f;
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 50%, #1a202c 100%);
+  color: white;
 }
 
 .tile:hover:not(.revealed):not(.disabled) {
   transform: translateY(-5px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #fbbf24 0%, #fcd34d 50%, #d97706 100%);
+  background: linear-gradient(135deg, #5a6478 0%, #3d4556 50%, #2a3142 100%);
 }
 
 .tile.revealed {
@@ -55,15 +55,15 @@
 
 @keyframes glowing {
   0% {
-    box-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 5px rgba(74, 85, 104, 0.3);
     transform: scale(1);
   }
   50% {
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.7), 0 0 30px rgba(252, 211, 77, 0.5);
+    box-shadow: 0 0 20px rgba(74, 85, 104, 0.7), 0 0 30px rgba(45, 55, 72, 0.5);
     transform: scale(1.05);
   }
   100% {
-    box-shadow: 0 0 5px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 5px rgba(74, 85, 104, 0.3);
     transform: scale(1);
   }
 }

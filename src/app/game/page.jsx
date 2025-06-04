@@ -43,12 +43,12 @@ export default function Game() {
     for (let row = 0; row < 4; row++) {
       const rowTiles = [];
 
-      // Crear 2 fichas ganadoras (+16000) y 2 perdedoras (-15000) para esta hilera
+      // Crear 2 fichas ganadoras (+15000) y 2 perdedoras (-16000) para esta hilera
       for (let i = 0; i < 2; i++) {
-        rowTiles.push({ value: 16000, revealed: false });  // Cambiado de 30000 a 16000
+        rowTiles.push({ value: 15000, revealed: false });  // GANADORAS: +15,000
       }
       for (let i = 0; i < 2; i++) {
-        rowTiles.push({ value: -15000, revealed: false }); // Cambiado de -30000 a -15000
+        rowTiles.push({ value: -16000, revealed: false }); // PERDEDORAS: -16,000
       }
 
       // Mezclarlas
@@ -828,506 +828,506 @@ export default function Game() {
 
       // Agregar estos eventos después de los otros socket.on(...) existentes
 
-// Evento cuando el nombre de usuario es cambiado
-socket.on('usernameChanged', ({ newUsername, message }) => {
- // Actualizar el usuario en sessionStorage
- const userData = sessionStorage.getItem('user');
- if (userData) {
-   const userObj = JSON.parse(userData);
-   userObj.username = newUsername;
-   sessionStorage.setItem('user', JSON.stringify(userObj));
-   
-   // Actualizar el estado local
-   setUser(prev => ({ ...prev, username: newUsername }));
- }
- 
- setMessage(message);
- setTimeout(() => setMessage(''), 5000);
-});
+      // Evento cuando el nombre de usuario es cambiado
+      socket.on('usernameChanged', ({ newUsername, message }) => {
+        // Actualizar el usuario en sessionStorage
+        const userData = sessionStorage.getItem('user');
+        if (userData) {
+          const userObj = JSON.parse(userData);
+          userObj.username = newUsername;
+          sessionStorage.setItem('user', JSON.stringify(userObj));
 
-// Evento cuando la contraseña es cambiada
-socket.on('passwordChanged', ({ message }) => {
- setMessage(message);
- setTimeout(() => setMessage(''), 5000);
-});
+          // Actualizar el estado local
+          setUser(prev => ({ ...prev, username: newUsername }));
+        }
 
-     return () => {
-       if (socket) {
-         socket.off('connect');
-         socket.off('connect_error');
-         socket.off('reconnect_attempt');
-         socket.off('gameState');
-         socket.off('tileSelected');
-         socket.off('tileSelectError');
-         socket.off('turnTimeout');
-         socket.off('scoreUpdate');
-         socket.off('forceScoreUpdate');
-         socket.off('directScoreUpdate');
-         socket.off('boardReset');
-         socket.off('tableLimitReached');
-         socket.off('tablesUnlocked');
-         socket.off('blocked');
-         socket.off('message');
-         socket.off('sessionClosed');
-         socket.off('tablesUpdate');
-         socket.off('playerConnectionChanged');
-         socket.off('scoreLimitReached');
-         socket.off('userUnlocked');
-         socket.off('blockStatusChanged');
-         socket.off('gameCompletelyReset');
-         socket.off('forceGameStateRefresh');
-         socket.off('forceSyncRequest');
-         socket.off('gameResetMessage');
-         socket.off('connectionStatusUpdate');
-         socket.off('ping');
-         socket.emit('saveGameState', { userId: user?.id }); // Guardar estado al salir
-         socket.emit('leaveGame');
-         socket.disconnect();
-       }
-     };
-   } catch (error) {
-     console.error('Error al procesar datos de usuario:', error);
-     router.push('/');
-   }
- }, [router]);
+        setMessage(message);
+        setTimeout(() => setMessage(''), 5000);
+      });
 
- // Añadir un mecanismo para detectar y solucionar problemas de interacción
- useEffect(() => {
-   // Si el usuario no puede seleccionar fichas por más de 10 segundos y debería poder
-   let problemDetectionTimer = null;
+      // Evento cuando la contraseña es cambiada
+      socket.on('passwordChanged', ({ message }) => {
+        setMessage(message);
+        setTimeout(() => setMessage(''), 5000);
+      });
 
-   if (isYourTurn && !canSelectTiles && !isScoreLocked && !user?.isBlocked && !maxTablesReached) {
-     problemDetectionTimer = setTimeout(() => {
-       console.log("Detectado posible problema de interacción, intentando corregir...");
-       // Solicitar reinicio de selecciones por hilera
-       socket.emit('resetRowSelections', { userId: user.id });
-       // Solicitar verificación de estado de mesas
-       socket.emit('checkTableStatus', { userId: user.id });
-     }, 10000);
-   }
+      return () => {
+        if (socket) {
+          socket.off('connect');
+          socket.off('connect_error');
+          socket.off('reconnect_attempt');
+          socket.off('gameState');
+          socket.off('tileSelected');
+          socket.off('tileSelectError');
+          socket.off('turnTimeout');
+          socket.off('scoreUpdate');
+          socket.off('forceScoreUpdate');
+          socket.off('directScoreUpdate');
+          socket.off('boardReset');
+          socket.off('tableLimitReached');
+          socket.off('tablesUnlocked');
+          socket.off('blocked');
+          socket.off('message');
+          socket.off('sessionClosed');
+          socket.off('tablesUpdate');
+          socket.off('playerConnectionChanged');
+          socket.off('scoreLimitReached');
+          socket.off('userUnlocked');
+          socket.off('blockStatusChanged');
+          socket.off('gameCompletelyReset');
+          socket.off('forceGameStateRefresh');
+          socket.off('forceSyncRequest');
+          socket.off('gameResetMessage');
+          socket.off('connectionStatusUpdate');
+          socket.off('ping');
+          socket.emit('saveGameState', { userId: user?.id }); // Guardar estado al salir
+          socket.emit('leaveGame');
+          socket.disconnect();
+        }
+      };
+    } catch (error) {
+      console.error('Error al procesar datos de usuario:', error);
+      router.push('/');
+    }
+  }, [router]);
 
-   return () => {
-     if (problemDetectionTimer) {
-       clearTimeout(problemDetectionTimer);
-     }
-   };
- }, [isYourTurn, canSelectTiles, isScoreLocked, user, maxTablesReached]);
+  // Añadir un mecanismo para detectar y solucionar problemas de interacción
+  useEffect(() => {
+    // Si el usuario no puede seleccionar fichas por más de 10 segundos y debería poder
+    let problemDetectionTimer = null;
 
- // Efecto para el temporizador optimizado
- useEffect(() => {
-   let timer;
+    if (isYourTurn && !canSelectTiles && !isScoreLocked && !user?.isBlocked && !maxTablesReached) {
+      problemDetectionTimer = setTimeout(() => {
+        console.log("Detectado posible problema de interacción, intentando corregir...");
+        // Solicitar reinicio de selecciones por hilera
+        socket.emit('resetRowSelections', { userId: user.id });
+        // Solicitar verificación de estado de mesas
+        socket.emit('checkTableStatus', { userId: user.id });
+      }, 10000);
+    }
 
-   if (isYourTurn) {
-     // Iniciar siempre con 6 segundos exactos
-     setTimeLeft(6);
-     setCanSelectTiles(true);
+    return () => {
+      if (problemDetectionTimer) {
+        clearTimeout(problemDetectionTimer);
+      }
+    };
+  }, [isYourTurn, canSelectTiles, isScoreLocked, user, maxTablesReached]);
 
-     // Reproducir sonido de turno siempre que sea tu turno
-     // (ya sea único jugador o multijugador)
-     playSoundSafely(turnSoundRef);
+  // Efecto para el temporizador optimizado
+  useEffect(() => {
+    let timer;
 
-     // Asegurar que el intervalo sea exactamente de 1 segundo
-     let previousTime = Date.now();
+    if (isYourTurn) {
+      // Iniciar siempre con 6 segundos exactos
+      setTimeLeft(6);
+      setCanSelectTiles(true);
 
-     timer = setInterval(() => {
-       const currentTime = Date.now();
-       // Ajustar el intervalo si es necesario
-       const drift = currentTime - previousTime - 1000;
-       previousTime = currentTime;
+      // Reproducir sonido de turno siempre que sea tu turno
+      // (ya sea único jugador o multijugador)
+      playSoundSafely(turnSoundRef);
 
-       setTimeLeft((prevTime) => {
-         const newTime = prevTime - 1;
-         console.log(`Temporizador: ${newTime} segundos (drift: ${drift}ms)`);
+      // Asegurar que el intervalo sea exactamente de 1 segundo
+      let previousTime = Date.now();
 
-         if (newTime <= 0) {
-           clearInterval(timer);
-           setCanSelectTiles(false);
-           return 0;
-         }
-         return newTime;
-       });
-     }, 1000);
-   } else {
-     clearInterval(timer);
-   }
+      timer = setInterval(() => {
+        const currentTime = Date.now();
+        // Ajustar el intervalo si es necesario
+        const drift = currentTime - previousTime - 1000;
+        previousTime = currentTime;
 
-   return () => {
-     if (timer) {
-       clearInterval(timer);
-     }
-   };
- }, [isYourTurn]);
+        setTimeLeft((prevTime) => {
+          const newTime = prevTime - 1;
+          console.log(`Temporizador: ${newTime} segundos (drift: ${drift}ms)`);
 
- // Efecto para limpiar la marca de última ficha seleccionada
- useEffect(() => {
-   if (lastSelectedTile) {
-     const timer = setTimeout(() => {
-       setBoard(prevBoard => {
-         const newBoard = [...prevBoard];
-         if (newBoard[lastSelectedTile.index] && newBoard[lastSelectedTile.index].lastSelected) {
-           newBoard[lastSelectedTile.index] = {
-             ...newBoard[lastSelectedTile.index],
-             lastSelected: false
-           };
-         }
-         return newBoard;
-       });
-     }, 2000);
+          if (newTime <= 0) {
+            clearInterval(timer);
+            setCanSelectTiles(false);
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+    } else {
+      clearInterval(timer);
+    }
 
-     return () => clearTimeout(timer);
-   }
- }, [lastSelectedTile]);
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [isYourTurn]);
+
+  // Efecto para limpiar la marca de última ficha seleccionada
+  useEffect(() => {
+    if (lastSelectedTile) {
+      const timer = setTimeout(() => {
+        setBoard(prevBoard => {
+          const newBoard = [...prevBoard];
+          if (newBoard[lastSelectedTile.index] && newBoard[lastSelectedTile.index].lastSelected) {
+            newBoard[lastSelectedTile.index] = {
+              ...newBoard[lastSelectedTile.index],
+              lastSelected: false
+            };
+          }
+          return newBoard;
+        });
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [lastSelectedTile]);
 
 
- // Función para manejar clics en fichas
- const handleTileClick = useCallback((index) => {
-   // No permitir seleccionar fichas si es administrador
-   if (user?.isAdmin) {
-     setMessage("Los administradores solo pueden observar el juego");
-     setTimeout(() => setMessage(''), 3000);
-     return;
-   }
+  // Función para manejar clics en fichas
+  const handleTileClick = useCallback((index) => {
+    // No permitir seleccionar fichas si es administrador
+    if (user?.isAdmin) {
+      setMessage("Los administradores solo pueden observar el juego");
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
 
-   // No permitir seleccionar fichas si está bloqueado por puntaje
-   if (isScoreLocked) {
-     setMessage("Tu cuenta está bloqueada por alcanzar 23000 puntos. Contacta al administrador.");
-     setTimeout(() => setMessage(''), 3000);
-     return;
-   }
+    // No permitir seleccionar fichas si está bloqueado por puntaje
+    if (isScoreLocked) {
+      setMessage("Tu cuenta está bloqueada por alcanzar 23000 puntos. Contacta al administrador.");
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
 
-   // No permitir seleccionar fichas si el usuario está bloqueado por el administrador
-   if (user?.isBlocked) {
-     setMessage("Tu cuenta está bloqueada. Puedes ver el juego pero no jugar.");
-     setTimeout(() => setMessage(''), 3000);
-     return;
-   }
+    // No permitir seleccionar fichas si el usuario está bloqueado por el administrador
+    if (user?.isBlocked) {
+      setMessage("Tu cuenta está bloqueada. Puedes ver el juego pero no jugar.");
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
 
-   // No permitir seleccionar fichas si se alcanzó el límite de mesas
-   if (maxTablesReached) {
-     setMessage(`Límite de mesas alcanzado. ${tableLockReason}`);
-     setTimeout(() => setMessage(''), 3000);
-     return;
-   }
+    // No permitir seleccionar fichas si se alcanzó el límite de mesas
+    if (maxTablesReached) {
+      setMessage(`Límite de mesas alcanzado. ${tableLockReason}`);
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
 
-   // Validar que haya un tablero válido
-   if (!Array.isArray(board) || board.length === 0) {
-     console.error("El tablero no es válido");
-     setMessage("Error: El tablero no es válido. Recargando...");
-     // Solicitar sincronización de estado para obtener un tablero válido
-     if (socket && socket.connected) {
-       socket.emit('syncGameState', { userId: user.id });
-     }
-     setTimeout(() => setMessage(''), 3000);
-     return;
-   }
+    // Validar que haya un tablero válido
+    if (!Array.isArray(board) || board.length === 0) {
+      console.error("El tablero no es válido");
+      setMessage("Error: El tablero no es válido. Recargando...");
+      // Solicitar sincronización de estado para obtener un tablero válido
+      if (socket && socket.connected) {
+        socket.emit('syncGameState', { userId: user.id });
+      }
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
 
-   // Validar que el índice sea válido
-   if (index < 0 || index >= board.length) {
-     console.error(`Índice de ficha inválido: ${index}`);
-     return;
-   }
+    // Validar que el índice sea válido
+    if (index < 0 || index >= board.length) {
+      console.error(`Índice de ficha inválido: ${index}`);
+      return;
+    }
 
-   // Validar que la ficha existe en el tablero
-   if (!board[index]) {
-     console.error(`La ficha en el índice ${index} no existe`);
-     return;
-   }
+    // Validar que la ficha existe en el tablero
+    if (!board[index]) {
+      console.error(`La ficha en el índice ${index} no existe`);
+      return;
+    }
 
-   // Verificar si ya está revelada
-   if (board[index].revealed) {
-     console.log("Esta ficha ya está revelada");
-     return;
-   }
+    // Verificar si ya está revelada
+    if (board[index].revealed) {
+      console.log("Esta ficha ya está revelada");
+      return;
+    }
 
-   if (!canSelectTiles) {
-     setMessage("¡No puedes seleccionar más fichas en este turno!");
-     setTimeout(() => setMessage(''), 2000);
-     return;
-   }
+    if (!canSelectTiles) {
+      setMessage("¡No puedes seleccionar más fichas en este turno!");
+      setTimeout(() => setMessage(''), 2000);
+      return;
+    }
 
-   if (!isYourTurn && players.length > 1) {
-     setMessage("¡Espera tu turno!");
-     setTimeout(() => setMessage(''), 2000);
-     return;
-   }
+    if (!isYourTurn && players.length > 1) {
+      setMessage("¡Espera tu turno!");
+      setTimeout(() => setMessage(''), 2000);
+      return;
+    }
 
-   if (timeLeft <= 0) {
-     setMessage("¡Tiempo agotado para este turno!");
-     setTimeout(() => setMessage(''), 2000);
-     return;
-   }
+    if (timeLeft <= 0) {
+      setMessage("¡Tiempo agotado para este turno!");
+      setTimeout(() => setMessage(''), 2000);
+      return;
+    }
 
-   const row = Math.floor(index / 4);
+    const row = Math.floor(index / 4);
 
-   if (rowSelections[row] >= 2) {
-     setMessage(`¡Límite de 2 fichas por hilera alcanzado en hilera ${row + 1}!`);
-     setTimeout(() => setMessage(''), 2000);
-     return;
-   }
+    if (rowSelections[row] >= 2) {
+      setMessage(`¡Límite de 2 fichas por hilera alcanzado en hilera ${row + 1}!`);
+      setTimeout(() => setMessage(''), 2000);
+      return;
+    }
 
-   const tileValue = board[index]?.value || 0;
-   if (!board[index]?.revealed) {
-     // IMPORTANTE: Usar setState con callback para asegurar que se base en el valor actual
-     setLocalScore(prevScore => {
-       const newScore = prevScore + tileValue;
+    const tileValue = board[index]?.value || 0;
+    if (!board[index]?.revealed) {
+      // IMPORTANTE: Usar setState con callback para asegurar que se base en el valor actual
+      setLocalScore(prevScore => {
+        const newScore = prevScore + tileValue;
 
-       // Guardar en sessionStorage de manera segura
-       try {
-         const userData = sessionStorage.getItem('user');
-         if (userData) {
-           const userObj = JSON.parse(userData);
-           userObj.score = newScore;
-           sessionStorage.setItem('user', JSON.stringify(userObj));
-           console.log('Puntaje local actualizado en sessionStorage:', newScore);
-         }
-       } catch (error) {
-         console.error('Error actualizando sessionStorage:', error);
-       }
+        // Guardar en sessionStorage de manera segura
+        try {
+          const userData = sessionStorage.getItem('user');
+          if (userData) {
+            const userObj = JSON.parse(userData);
+            userObj.score = newScore;
+            sessionStorage.setItem('user', JSON.stringify(userObj));
+            console.log('Puntaje local actualizado en sessionStorage:', newScore);
+          }
+        } catch (error) {
+          console.error('Error actualizando sessionStorage:', error);
+        }
 
-       return newScore;
-     });
+        return newScore;
+      });
 
-     // Actualizar el tablero localmente para feedback inmediato
-     setBoard(prevBoard => {
-       const newBoard = [...prevBoard];
-       if (newBoard[index]) {
-         newBoard[index] = {
-           ...newBoard[index],
-           revealed: true,
-           lastSelected: true
-         };
-       }
-       return newBoard;
-     });
+      // Actualizar el tablero localmente para feedback inmediato
+      setBoard(prevBoard => {
+        const newBoard = [...prevBoard];
+        if (newBoard[index]) {
+          newBoard[index] = {
+            ...newBoard[index],
+            revealed: true,
+            lastSelected: true
+          };
+        }
+        return newBoard;
+      });
 
-     // Actualizar las selecciones de hilera y verificar si se debe avanzar al siguiente tablero
-     setRowSelections(prev => {
-       const updated = [...prev];
-       updated[row]++;
+      // Actualizar las selecciones de hilera y verificar si se debe avanzar al siguiente tablero
+      setRowSelections(prev => {
+        const updated = [...prev];
+        updated[row]++;
 
-       // Verificar si se han completado las selecciones en todas las hileras
-       const allRowsFull = updated.every(count => count >= 2);
+        // Verificar si se han completado las selecciones en todas las hileras
+        const allRowsFull = updated.every(count => count >= 2);
 
-       // Si todas las hileras están completas y hay un solo jugador o somos el único activo,
-       // avanzar al siguiente tablero
-       if (allRowsFull && (players.length <= 1 || players.filter(p => p.isConnected).length <= 1)) {
-         console.log('Jugador único completó todas sus selecciones, avanzando al siguiente tablero');
+        // Si todas las hileras están completas y hay un solo jugador o somos el único activo,
+        // avanzar al siguiente tablero
+        if (allRowsFull && (players.length <= 1 || players.filter(p => p.isConnected).length <= 1)) {
+          console.log('Jugador único completó todas sus selecciones, avanzando al siguiente tablero');
 
-         // Incrementar contador de mesas mediante socket
-         socket.emit('completeBoard', { userId: user.id });
-       }
+          // Incrementar contador de mesas mediante socket
+          socket.emit('completeBoard', { userId: user.id });
+        }
 
-       return updated;
-     });
-   }
+        return updated;
+      });
+    }
 
-   // Emisión al servidor con información completa
-   socket.emit('selectTile', {
-     tileIndex: index,
-     currentScore: localScore // Enviar el puntaje actual para verificación
-   });
- }, [board, canSelectTiles, isYourTurn, timeLeft, rowSelections, localScore, maxTablesReached, tableLockReason, socket, isScoreLocked, user, players]);
+    // Emisión al servidor con información completa
+    socket.emit('selectTile', {
+      tileIndex: index,
+      currentScore: localScore // Enviar el puntaje actual para verificación
+    });
+  }, [board, canSelectTiles, isYourTurn, timeLeft, rowSelections, localScore, maxTablesReached, tableLockReason, socket, isScoreLocked, user, players]);
 
- // Esta función debe ir en la sección de funciones de tu componente
- const handleUnlockAllTables = () => {
-   if (socket && socket.connected) {
-     setMessage('Desbloqueando mesas para todos los jugadores...');
-     socket.emit('unlockAllTables', {}, (response) => {
-       if (response && response.success) {
-         setMessage('Todas las mesas han sido desbloqueadas');
-         setShowUnlockAlert(false);
-         setMaxTablesReached(false);
-         setTableLockReason('');
-         setTimeout(() => setMessage(''), 3000);
-       } else {
-         setMessage('Error al desbloquear mesas');
-         setTimeout(() => setMessage(''), 3000);
-       }
-     });
-   }
- };
+  // Esta función debe ir en la sección de funciones de tu componente
+  const handleUnlockAllTables = () => {
+    if (socket && socket.connected) {
+      setMessage('Desbloqueando mesas para todos los jugadores...');
+      socket.emit('unlockAllTables', {}, (response) => {
+        if (response && response.success) {
+          setMessage('Todas las mesas han sido desbloqueadas');
+          setShowUnlockAlert(false);
+          setMaxTablesReached(false);
+          setTableLockReason('');
+          setTimeout(() => setMessage(''), 3000);
+        } else {
+          setMessage('Error al desbloquear mesas');
+          setTimeout(() => setMessage(''), 3000);
+        }
+      });
+    }
+  };
 
- // Memoizar el tablero para evitar re-renderizados innecesarios
- const memoizedBoard = useMemo(() => (
-   Array.isArray(board) && board.length > 0 ? (
-     board.map((tile, index) => (
-       <Tile
-         key={index}
-         index={index}
-         revealed={tile?.revealed || false}
-         value={tile?.value || 0}
-         onClick={() => handleTileClick(index)}
-         disabled={
-           tile?.revealed ||
-           !canSelectTiles ||
-           timeLeft <= 0 ||
-           rowSelections[Math.floor(index / 4)] >= 2 ||
-           maxTablesReached ||
-           isScoreLocked ||
-           user?.isBlocked ||
-           user?.isAdmin
-         }
-         lastSelected={lastSelectedTile?.index === index}
-         selectedBy={tile?.selectedBy}
-         currentUsername={user?.username} // Añadido para resaltar fichas del jugador actual
-       />
-     ))
-   ) : (
-     <div className="loading-message">
-       Cargando tablero...
-       <button
-         onClick={() => {
-           if (socket) {
-             socket.emit('joinGame');
-           }
-         }}
-         className="retry-button"
-       >
-         Reintentar
-       </button>
-     </div>
-   )
- ), [board, canSelectTiles, timeLeft, rowSelections, lastSelectedTile, maxTablesReached, isScoreLocked, user, handleTileClick]);
+  // Memoizar el tablero para evitar re-renderizados innecesarios
+  const memoizedBoard = useMemo(() => (
+    Array.isArray(board) && board.length > 0 ? (
+      board.map((tile, index) => (
+        <Tile
+          key={index}
+          index={index}
+          revealed={tile?.revealed || false}
+          value={tile?.value || 0}
+          onClick={() => handleTileClick(index)}
+          disabled={
+            tile?.revealed ||
+            !canSelectTiles ||
+            timeLeft <= 0 ||
+            rowSelections[Math.floor(index / 4)] >= 2 ||
+            maxTablesReached ||
+            isScoreLocked ||
+            user?.isBlocked ||
+            user?.isAdmin
+          }
+          lastSelected={lastSelectedTile?.index === index}
+          selectedBy={tile?.selectedBy}
+          currentUsername={user?.username} // Añadido para resaltar fichas del jugador actual
+        />
+      ))
+    ) : (
+      <div className="loading-message">
+        Cargando tablero...
+        <button
+          onClick={() => {
+            if (socket) {
+              socket.emit('joinGame');
+            }
+          }}
+          className="retry-button"
+        >
+          Reintentar
+        </button>
+      </div>
+    )
+  ), [board, canSelectTiles, timeLeft, rowSelections, lastSelectedTile, maxTablesReached, isScoreLocked, user, handleTileClick]);
 
- if (!user) {
-   return <div className="loading">Cargando...</div>;
- }
+  if (!user) {
+    return <div className="loading">Cargando...</div>;
+  }
 
- return (
-   <>
-     {/* Componente para ocultar el logo programáticamente */}
-     <HideLogoEffect />
+  return (
+    <>
+      {/* Componente para ocultar el logo programáticamente */}
+      <HideLogoEffect />
 
-     {/* Componente de lluvia de monedas con clave única */}
-     {showCoinRain && (
-       <CoinRain
-         key={`coin-rain-${coinRainId}`}
-         active={true}
-         onComplete={handleCoinRainComplete}
-       />
-     )}
+      {/* Componente de lluvia de monedas con clave única */}
+      {showCoinRain && (
+        <CoinRain
+          key={`coin-rain-${coinRainId}`}
+          active={true}
+          onComplete={handleCoinRainComplete}
+        />
+      )}
 
-     {(user?.isAdmin || user?.username?.toLowerCase() === "admin") && (
-       <button
-         className="admin-panel-button"
-         onClick={handleAdminPanel}
-       >
-         Panel de Admin
-       </button>
-     )}
+      {(user?.isAdmin || user?.username?.toLowerCase() === "admin") && (
+        <button
+          className="admin-panel-button"
+          onClick={handleAdminPanel}
+        >
+          Panel de Admin
+        </button>
+      )}
 
-     <div className="game-container game-page">
-       <audio ref={winSoundRef} src="/sounds/win.mp3" preload="auto"></audio>
-       <audio ref={loseSoundRef} src="/sounds/lose.mp3" preload="auto"></audio>
-       <audio ref={turnSoundRef} src="/sounds/turno.mp3" preload="auto"></audio>
+      <div className="game-container game-page">
+        <audio ref={winSoundRef} src="/sounds/win.mp3" preload="auto"></audio>
+        <audio ref={loseSoundRef} src="/sounds/lose.mp3" preload="auto"></audio>
+        <audio ref={turnSoundRef} src="/sounds/turno.mp3" preload="auto"></audio>
 
-       {/* Restaurar las alertas de puntos, pero solo para el jugador actual */}
-       {showAlert && (
-         <div className={`points-alert ${alertType}`}>
-           {alertMessage}
-         </div>
-       )}
+        {/* Restaurar las alertas de puntos, pero solo para el jugador actual */}
+        {showAlert && (
+          <div className={`points-alert ${alertType}`}>
+            {alertMessage}
+          </div>
+        )}
 
-       <div className="game-info">
-         <div className="game-header">
-           <h2>Jugador: {user?.username}</h2>
-           <button className="logout-button" onClick={handleLogout}>
-             Cerrar Sesión
-           </button>
-         </div>
+        <div className="game-info">
+          <div className="game-header">
+            <h2>Jugador: {user?.username}</h2>
+            <button className="logout-button" onClick={handleLogout}>
+              Cerrar Sesión
+            </button>
+          </div>
 
-         {isConnected ? (
-           <div className="connection-status connected">Conectado al servidor</div>
-         ) : (
-           <div className="connection-status disconnected">Desconectado del servidor</div>
-         )}
-       </div>
+          {isConnected ? (
+            <div className="connection-status connected">Conectado al servidor</div>
+          ) : (
+            <div className="connection-status disconnected">Desconectado del servidor</div>
+          )}
+        </div>
 
-      {/* Mesa y turno en la parte superior */}
-       <div className="game-status-bar">
-         <div className="table-info">
-           Mesa {currentTableNumber}
-         <div className="table-amount">30.000</div>
-         </div>
-         <div className={`turn-status ${isYourTurn ? 'your-turn-indicator' : 'wait-turn-indicator'}`}>
-           {isYourTurn ? "Tu turno" : "Espere su turno"}
-         </div>
-       </div>
+        {/* Mesa y turno en la parte superior */}
+        <div className="game-status-bar">
+          <div className="table-info">
+            Mesa {currentTableNumber}
+            <div className="table-amount">15.000</div>
+          </div>
+          <div className={`turn-status ${isYourTurn ? 'your-turn-indicator' : 'wait-turn-indicator'}`}>
+            {isYourTurn ? "Tu turno" : "Espere su turno"}
+          </div>
+        </div>
 
-       {/* Puntaje después de mesa y turno */}
-       <div className="game-score">
-         Puntaje: {localScore}
-       </div>
+        {/* Puntaje después de mesa y turno */}
+        <div className="game-score">
+          Puntaje: {localScore}
+        </div>
 
-       {/* Contador de tiempo antes del tablero */}
-       <div className="time-display">
-         Tiempo: <span className={`timer-value ${timeLeft === 0 ? 'time-up' : ''}`}>{timeLeft}</span> segundos
-       </div>
+        {/* Contador de tiempo antes del tablero */}
+        <div className="time-display">
+          Tiempo: <span className={`timer-value ${timeLeft === 0 ? 'time-up' : ''}`}>{timeLeft}</span> segundos
+        </div>
 
-       {/* Añade esto DESPUÉS del div time-display */}
-       {showUnlockAlert && (
-         <div className="table-lock-alert">
-           <p>Por seguridad se bloqueó la mesa. Haz click en desbloquear mesa.</p>
-           <button
-             onClick={handleUnlockAllTables}
-             className="unlock-all-tables-btn"
-           >
-             Desbloquear mesa
-           </button>
-         </div>
-       )}
+        {/* Añade esto DESPUÉS del div time-display */}
+        {showUnlockAlert && (
+          <div className="table-lock-alert">
+            <p>Por seguridad se bloqueó la mesa. Haz click en desbloquear mesa.</p>
+            <button
+              onClick={handleUnlockAllTables}
+              className="unlock-all-tables-btn"
+            >
+              Desbloquear mesa
+            </button>
+          </div>
+        )}
 
-       
 
-       {/* Mensajes de bloqueo */}
-       {isScoreLocked && (
-         <div className="score-lock-banner">
-           Tu cuenta está bloqueada por alcanzar 23000 puntos. Contacta al administrador.
-         </div>
-       )}
 
-       {user?.isBlocked && (
-         <div className="score-lock-banner">
-           Tu cuenta está bloqueada por el administrador. Puedes ver el juego pero no jugar.
-         </div>
-       )}
+        {/* Mensajes de bloqueo */}
+        {isScoreLocked && (
+          <div className="score-lock-banner">
+            Tu cuenta está bloqueada por alcanzar 23000 puntos. Contacta al administrador.
+          </div>
+        )}
 
-       {user?.isAdmin && (
-         <div className="admin-info-banner">
-           Modo administrador: Solo puedes observar el juego.
-         </div>
-       )}
+        {user?.isBlocked && (
+          <div className="score-lock-banner">
+            Tu cuenta está bloqueada por el administrador. Puedes ver el juego pero no jugar.
+          </div>
+        )}
 
-       {message && <div className="message">{message}</div>}
+        {user?.isAdmin && (
+          <div className="admin-info-banner">
+            Modo administrador: Solo puedes observar el juego.
+          </div>
+        )}
 
-       {/* Tablero de juego */}
-       <div className="game-board">
-         {memoizedBoard}
-       </div>
+        {message && <div className="message">{message}</div>}
 
-       {/* Jugador actual */}
-       {currentPlayer && (
-         <div className="current-player">
-           Jugador actual: <span className="current-player-name">{currentPlayer.username}</span>
-         </div>
-       )}
+        {/* Tablero de juego */}
+        <div className="game-board">
+          {memoizedBoard}
+        </div>
 
-       {/* Lista de jugadores conectados */}
-       <div className="players-section">
-         <h3>Jugadores conectados</h3>
-         <PlayerList players={players} currentPlayerId={currentPlayer?.id} />
-       </div>
+        {/* Jugador actual */}
+        {currentPlayer && (
+          <div className="current-player">
+            Jugador actual: <span className="current-player-name">{currentPlayer.username}</span>
+          </div>
+        )}
 
-       {showAdminModal && (
-         <AdminButton
-           onClose={() => setShowAdminModal(false)}
-           socket={socket}
-         />
-       )}
+        {/* Lista de jugadores conectados */}
+        <div className="players-section">
+          <h3>Jugadores conectados</h3>
+          <PlayerList players={players} currentPlayerId={currentPlayer?.id} />
+        </div>
 
-       {/* Botón de WhatsApp */}
-       <WhatsAppButton phoneNumber="5492945552523" />
-     </div>
-   </>
- );
+        {showAdminModal && (
+          <AdminButton
+            onClose={() => setShowAdminModal(false)}
+            socket={socket}
+          />
+        )}
+
+        {/* Botón de WhatsApp */}
+        <WhatsAppButton phoneNumber="5492945552523" />
+      </div>
+    </>
+  );
 }
