@@ -135,7 +135,7 @@ export default function Home() {
           </div>
           <button type="submit" className="login-button">Entrar</button>
           <a 
-          href="https://ftappgame-dusky.vercel.app/"
+          href="https://m-j-app-game.vercel.app/"
           className="login-button home-button"
           target="_blank"
           rel="noopener noreferrer"
