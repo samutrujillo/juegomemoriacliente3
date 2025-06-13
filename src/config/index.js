@@ -1,6 +1,6 @@
 const config = {
   socketServerUrl: process.env.NODE_ENV === 'production' 
-    ? 'https://juegomemoriaservidor3.onrender.com'
+    ? 'https://juegomemoriaservidor3-qsxt.onrender.com'
     : 'http://localhost:5000',
   socketOptions: {
     reconnection: true,
